@@ -77,3 +77,10 @@ model NotificationEvent {
   @@index([userId, createdAt])
   @@index([androidDeviceId, createdAt])
 }
+
+model AdminCredential {
+  id           String   @id @default("admin")
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

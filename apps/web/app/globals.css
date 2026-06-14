@@ -146,6 +146,41 @@ a { color: inherit; }
   color: #1d4ed8;
   font-weight: 650;
 }
+.form {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  font-weight: 650;
+}
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+.stat-card strong {
+  font-size: 28px;
+}
+.stat-card p {
+  margin: 0;
+}
 
 @media (max-width: 700px) {
   .setup-step {
