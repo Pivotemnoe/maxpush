@@ -1,0 +1,23 @@
+{
+  "name": "max-push-mvp",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm --workspace apps/web run dev",
+    "build": "npm --workspace apps/web run build",
+    "test": "npm --workspace apps/web run test",
+    "prisma:generate": "npm --workspace apps/web exec prisma generate -- --schema=../../prisma/schema.prisma",
+    "prisma:migrate": "npm --workspace apps/web exec prisma migrate dev -- --schema=../../prisma/schema.prisma",
+    "prisma:deploy": "npm --workspace apps/web exec prisma migrate deploy -- --schema=../../prisma/schema.prisma"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.15"
+    }
+  },
+  "devDependencies": {
+    "postcss": "8.5.15"
+  }
+}

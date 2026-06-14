@@ -1,0 +1,25 @@
+[Unit]
+Description=Max Push PWA/API
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=maxpush
+Group=maxpush
+WorkingDirectory=/opt/maxpush/current/apps/web
+EnvironmentFile=/etc/maxpush/maxpush.env
+Environment=NODE_ENV=production
+Environment=PORT=3001
+Environment=HOSTNAME=127.0.0.1
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/opt/maxpush /var/lib/maxpush
+
+[Install]
+WantedBy=multi-user.target
