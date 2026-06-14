@@ -67,6 +67,18 @@ VAPID_SUBJECT="mailto:support@notifymax.ru"
 
 `NEXT_PUBLIC_VAPID_PUBLIC_KEY` и `VAPID_PUBLIC_KEY` должны совпадать.
 
+## Порядок подключения пользователя
+
+1. Открыть `https://notifymax.ru/` на Android, где уже установлен MAX.
+2. Скачать и установить APK “Макс Пуш”.
+3. Открыть “Макс Пуш” на Android и оставить приложение открытым.
+4. Открыть `https://notifymax.ru/` на iPhone, перейти в iPhone PWA, добавить PWA на экран “Домой” и включить уведомления.
+5. На iPhone нажать “Показать QR для Android”.
+6. На Android нажать “Сканировать QR-код с iPhone”.
+7. На Android нажать “Включить доступ к уведомлениям”.
+8. Если Android показывает “Доступ к настройкам ограничен”, открыть настройки приложения “Макс Пуш”, нажать меню `⋮` и выбрать “Разрешить ограниченные настройки”.
+9. Вернуться в “Макс Пуш” и нажать “Отправить тест”.
+
 ## Android debug APK
 
 Нужен установленный Android Studio / Android SDK.
@@ -109,15 +121,45 @@ apps/android/app/build/outputs/apk/debug/app-debug.apk
 apps/web/public/download/max-push-latest.apk
 ```
 
+## Android release APK
+
+Release APK подписывается локальным keystore. Keystore и пароли не коммитятся.
+
+Один раз создайте `apps/android/signing.local.properties`:
+
+```properties
+maxPushReleaseStoreFile=keystore/maxpush-release.jks
+maxPushReleaseStorePassword=...
+maxPushReleaseKeyAlias=maxpush
+maxPushReleaseKeyPassword=...
+```
+
+Затем:
+
+```bash
+cd apps/android
+./gradlew assembleRelease
+cd ../..
+./scripts/copy-release-apk.sh
+```
+
+Публичный APK:
+
+```text
+apps/web/public/download/max-push-latest.apk
+```
+
+Важно: если на Android уже стояла debug-сборка, её нужно удалить перед установкой release APK, потому что подпись другая.
+
 ## Проверка MVP
 
-1. Открыть `/app` на iPhone.
-2. Добавить PWA на экран “Домой”.
-3. Открыть PWA с экрана “Домой”.
-4. Нажать “Включить уведомления”.
-5. Получить QR-код.
-6. Установить APK на Android.
-7. Сканировать QR-код или ввести код вручную.
+1. Установить APK на Android.
+2. Открыть `/app` на iPhone.
+3. Добавить PWA на экран “Домой”.
+4. Открыть PWA с экрана “Домой”.
+5. Нажать “Включить уведомления”.
+6. Нажать “Показать QR для Android”.
+7. На Android нажать “Сканировать QR-код с iPhone”.
 8. Включить доступ к уведомлениям для “Макс Пуш”.
    Если Android показывает “Доступ к настройкам ограничен”, откройте “О приложении Макс Пуш”, нажмите меню `⋮` и выберите “Разрешить ограниченные настройки”. Затем вернитесь в приложение и снова включите доступ к уведомлениям.
 9. Нажать “Отправить тест”.

@@ -1,0 +1,4 @@
+maxPushReleaseStoreFile=keystore/maxpush-release.jks
+maxPushReleaseStorePassword=change-me
+maxPushReleaseKeyAlias=maxpush
+maxPushReleaseKeyPassword=change-me

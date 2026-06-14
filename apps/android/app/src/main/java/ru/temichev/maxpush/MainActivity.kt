@@ -69,26 +69,34 @@ class MainActivity : Activity() {
         scroll.addView(root)
 
         root.addView(title("Макс Пуш"))
-        root.addView(paragraph("Передаёт уведомления MAX с этого Android на ваш iPhone. Текст сообщений не передаётся — только отправитель."))
+        root.addView(paragraph("Передаёт уведомления MAX с этого Android на iPhone. Текст сообщений не передаётся — только отправитель или название чата."))
 
         statusText = paragraph(statusText())
         root.addView(statusText)
 
-        root.addView(button("Сканировать QR-код") {
+        root.addView(sectionTitle("Шаг 1. Свяжите Android с iPhone"))
+        root.addView(paragraph("На iPhone откройте PWA “Макс Пуш” и нажмите “Показать QR для Android”. Затем нажмите кнопку ниже на Android."))
+
+        root.addView(button("Сканировать QR-код с iPhone") {
             startActivityForResult(Intent(this, ScanQrActivity::class.java), scanRequestCode)
         })
 
         root.addView(button("Ввести код вручную") { showManualCodeDialog() })
 
+        root.addView(sectionTitle("Шаг 2. Разрешите доступ к уведомлениям"))
+        root.addView(paragraph("После QR-подключения включите системный доступ к уведомлениям для “Макс Пуш”."))
+
         root.addView(button("Включить доступ к уведомлениям") {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         })
 
-        root.addView(paragraph("Если Android пишет “Доступ к настройкам ограничен”, откройте настройки приложения, нажмите меню ⋮ и выберите “Разрешить ограниченные настройки”. После этого вернитесь сюда и снова включите доступ к уведомлениям."))
-
         root.addView(button("Открыть настройки приложения") {
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
         })
+
+        root.addView(paragraph("Если Android пишет “Доступ к настройкам ограничен”: нажмите “Открыть настройки приложения”, затем меню ⋮ и “Разрешить ограниченные настройки”. После этого вернитесь сюда и снова включите доступ к уведомлениям."))
+
+        root.addView(sectionTitle("Шаг 3. Проверьте отправку"))
 
         root.addView(button("Отправить тест") { sendTestNotification() })
 
@@ -202,6 +210,12 @@ class MainActivity : Activity() {
         this.text = text
         textSize = 26f
         setPadding(0, 0, 0, 20)
+    }
+
+    private fun sectionTitle(text: String): TextView = TextView(this).apply {
+        this.text = text
+        textSize = 20f
+        setPadding(0, 26, 0, 8)
     }
 
     private fun paragraph(text: String): TextView = TextView(this).apply {

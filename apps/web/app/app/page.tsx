@@ -151,12 +151,20 @@ export default function AppPage() {
         setMessage("Сначала нужно подготовить сессию. Нажмите “Повторить подключение”.");
         return;
       }
+      if (!window.isSecureContext) {
+        setMessage("Push работает только на HTTPS-домене. Откройте https://notifymax.ru/app.");
+        return;
+      }
       if (!canPush) {
-        setMessage("Этот браузер не поддерживает Web Push.");
+        setMessage("Этот браузер не поддерживает Web Push. На iPhone откройте сайт в Safari, добавьте на экран “Домой” и запускайте с иконки.");
         return;
       }
       if (!standalone && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         setMessage("На iPhone сначала добавьте сайт на экран «Домой» и откройте его как приложение.");
+        return;
+      }
+      if (Notification.permission === "denied") {
+        setMessage("Уведомления уже запрещены в iOS. Откройте Настройки → Уведомления → Макс Пуш и включите “Допуск уведомлений”. Если “Макс Пуш” там нет, удалите иконку PWA с экрана Домой и добавьте сайт заново.");
         return;
       }
       if (!vapidKey) {
@@ -165,7 +173,7 @@ export default function AppPage() {
       }
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        setMessage("Уведомления не разрешены.");
+        setMessage("Уведомления не разрешены. Если окно iOS больше не появляется, проверьте Настройки → Уведомления → Макс Пуш или переустановите PWA на экран “Домой”.");
         return;
       }
       await navigator.serviceWorker.register("/sw.js");
@@ -220,13 +228,20 @@ export default function AppPage() {
   return (
     <main className="container stack">
       <section className="card stack">
-        <h1>Макс Пуш</h1>
-        <p className="muted">Дубликаты уведомлений MAX с Android на iPhone. Текст сообщений не передаётся — только отправитель или название чата.</p>
+        <h1>Подключение Макс Пуш</h1>
+        <p className="muted">Сначала установите Android APK. Затем на iPhone включите PWA-уведомления, покажите QR и отсканируйте его в Android-приложении.</p>
         {!standalone && (
           <div className="notice small">
             <strong>Для iPhone:</strong> откройте сайт в Safari, нажмите “Поделиться”, выберите “На экран Домой”, затем откройте “Макс Пуш” с экрана Домой.
           </div>
         )}
+        <ol className="steps">
+          <li>На Android установите “Макс Пуш” и оставьте приложение открытым.</li>
+          <li>На iPhone нажмите “Включить уведомления”.</li>
+          <li>На iPhone нажмите “Показать QR для Android”.</li>
+          <li>На Android нажмите “Сканировать QR-код с iPhone”.</li>
+          <li>На Android нажмите “Включить доступ к уведомлениям”, затем “Отправить тест”.</li>
+        </ol>
         <div className="notice privacy small">
           <strong>Приватность:</strong> Android выдаёт приложению системный доступ к уведомлениям, но Макс Пуш в коде принимает только package MAX и не читает текст сообщения. На сервер отправляются только технический ID, отправитель/чат и время.
         </div>
@@ -236,8 +251,8 @@ export default function AppPage() {
           <span className={devices?.android_device ? "badge ok" : "badge warn"}>Android: {devices?.android_device ? "подключён" : "не подключён"}</span>
         </div>
         <div className="row">
-          <button className="button" onClick={enablePush} disabled={pushEnabled}>Включить уведомления</button>
-          <button className="button secondary" onClick={startPairing}>Показать QR для Android</button>
+          <button className="button" onClick={enablePush} disabled={pushEnabled}>2. Включить уведомления на iPhone</button>
+          <button className="button secondary" onClick={startPairing}>3. Показать QR для Android</button>
           <button className="button secondary" onClick={loadRecent}>Обновить историю</button>
           {!sessionReady && <button className="button secondary" onClick={() => prepareSession().catch((e) => setMessage(`Не удалось подготовить сессию: ${errorText(e)}`))}>Повторить подключение</button>}
         </div>
@@ -256,12 +271,12 @@ export default function AppPage() {
       )}
 
       <section className="card stack">
-        <h2>Как это работает</h2>
+        <h2>Порядок действий на Android</h2>
         <ol className="steps">
-          <li>Добавьте PWA на экран “Домой” на iPhone и включите уведомления.</li>
           <li>Установите Android APK на телефон, где уже стоит MAX.</li>
-          <li>Свяжите Android с iPhone через одноразовый QR-код.</li>
-          <li>Разрешите Android-доступ к уведомлениям для “Макс Пуш”.</li>
+          <li>В Android-приложении нажмите “Сканировать QR-код с iPhone”.</li>
+          <li>После сканирования нажмите “Включить доступ к уведомлениям”.</li>
+          <li>Если Android блокирует доступ, откройте настройки приложения → меню ⋮ → “Разрешить ограниченные настройки”.</li>
         </ol>
         <p className="small muted">Сервис не восстанавливает push внутри официального MAX. Он отправляет внешний дубликат на вашу PWA.</p>
       </section>

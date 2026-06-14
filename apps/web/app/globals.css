@@ -100,22 +100,33 @@ a { color: inherit; }
   padding-left: 22px;
 }
 .steps li { padding: 4px 0; }
-.launch-grid {
+.setup-flow {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
-.launch-panel {
+.setup-step {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px;
-  display: grid;
+  display: flex;
   gap: 12px;
-  align-content: start;
+  align-items: flex-start;
 }
-.launch-panel h2 {
+.setup-step h2 {
   margin: 0;
   font-size: 24px;
+}
+.step-number {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 750;
 }
 .download-box {
   border: 1px solid #bfdbfe;
@@ -132,7 +143,7 @@ a { color: inherit; }
 }
 
 @media (max-width: 700px) {
-  .launch-grid {
-    grid-template-columns: 1fr;
+  .setup-step {
+    display: grid;
   }
 }

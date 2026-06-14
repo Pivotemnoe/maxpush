@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Max Push">
+  <rect width="512" height="512" rx="112" fill="#111827"/>
+  <path d="M122 350V162h46l54 82 54-82h46v188h-48V246l-35 56h-34l-35-56v104z" fill="#fff"/>
+  <path d="M330 350V162h68c49 0 82 32 82 76s-33 76-82 76h-20v36z" fill="#38bdf8"/>
+  <path d="M378 273h17c23 0 37-13 37-35s-14-35-37-35h-17z" fill="#111827"/>
+  <path d="M354 116h116v24H354zM402 76h68v24h-68z" fill="#a7f3d0"/>
+  <circle cx="116" cy="116" r="24" fill="#a7f3d0"/>
+</svg>

@@ -1,4 +1,5 @@
 import java.net.URI
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -9,6 +10,21 @@ val defaultApiBaseUrl = providers.gradleProperty("maxPushApiBaseUrl").orElse("ht
 val allowedApiHost = URI(defaultApiBaseUrl).host ?: "notifymax.ru"
 val allowQrBaseUrlOverride = providers.gradleProperty("maxPushAllowQrBaseUrlOverride").orElse("false").get()
 val allowCleartextTraffic = providers.gradleProperty("maxPushAllowCleartextTraffic").orElse(allowQrBaseUrlOverride).get()
+val signingProperties = Properties()
+val signingPropertiesFile = rootProject.file("signing.local.properties")
+if (signingPropertiesFile.exists()) {
+    signingPropertiesFile.inputStream().use(signingProperties::load)
+}
+fun releaseSigningValue(name: String): String? {
+    return providers.gradleProperty(name).orNull
+        ?: System.getenv(name.uppercase().replace('.', '_'))
+        ?: signingProperties.getProperty(name)
+}
+val releaseStoreFile = releaseSigningValue("maxPushReleaseStoreFile")
+val releaseStorePassword = releaseSigningValue("maxPushReleaseStorePassword")
+val releaseKeyAlias = releaseSigningValue("maxPushReleaseKeyAlias")
+val releaseKeyPassword = releaseSigningValue("maxPushReleaseKeyPassword")
+val hasReleaseSigning = listOf(releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword).all { !it.isNullOrBlank() }
 
 android {
     namespace = "ru.temichev.maxpush"
@@ -29,6 +45,27 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
     }
 
     compileOptions {
