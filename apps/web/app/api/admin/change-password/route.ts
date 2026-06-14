@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE, adminCookieOptions, adminSessionValue, normalizeAdminUsername, requireAdminSession, upsertAdminCredential, validateAdminPassword, validateAdminUsername, verifyAdminPassword } from "@/lib/adminAuth";
+import { ADMIN_SESSION_COOKIE, adminCookieOptions, adminRedirectUrl, adminSessionValue, normalizeAdminUsername, requireAdminSession, upsertAdminCredential, validateAdminPassword, validateAdminUsername, verifyAdminPassword } from "@/lib/adminAuth";
 
-function redirect(request: Request, message: string) {
-  return NextResponse.redirect(new URL(`/admin?message=${message}`, request.url), 303);
+function redirect(message: string) {
+  return NextResponse.redirect(adminRedirectUrl(`/admin?message=${message}`), 303);
 }
 
 export async function POST(request: Request) {
   const credential = await requireAdminSession().catch(() => null);
-  if (!credential) return redirect(request, "login_error");
+  if (!credential) return redirect("login_error");
 
   const form = await request.formData();
   const current = form.get("current_password");
@@ -23,11 +23,11 @@ export async function POST(request: Request) {
     validateAdminPassword(next) ||
     !verifyAdminPassword(current, credential.passwordHash)
   ) {
-    return redirect(request, "change_error");
+    return redirect("change_error");
   }
 
   const updated = await upsertAdminCredential(username, next);
-  const res = redirect(request, "password_changed");
+  const res = redirect("password_changed");
   res.cookies.set(ADMIN_SESSION_COOKIE, adminSessionValue(updated.updatedAt), adminCookieOptions());
   return res;
 }

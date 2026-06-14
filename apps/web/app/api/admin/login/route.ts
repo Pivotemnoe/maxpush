@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE, adminCookieOptions, adminSessionValue, getAdminCredential, normalizeAdminUsername, verifyAdminPassword } from "@/lib/adminAuth";
+import { ADMIN_SESSION_COOKIE, adminCookieOptions, adminRedirectUrl, adminSessionValue, getAdminCredential, normalizeAdminUsername, verifyAdminPassword } from "@/lib/adminAuth";
 
-function redirect(request: Request, message?: string) {
-  return NextResponse.redirect(new URL(message ? `/admin?message=${message}` : "/admin", request.url), 303);
+function redirect(message?: string) {
+  return NextResponse.redirect(adminRedirectUrl(message ? `/admin?message=${message}` : "/admin"), 303);
 }
 
 export async function POST(request: Request) {
@@ -11,10 +11,10 @@ export async function POST(request: Request) {
   const username = normalizeAdminUsername(form.get("username"));
   const password = form.get("password");
   if (!credential || username !== credential.username || typeof password !== "string" || !verifyAdminPassword(password, credential.passwordHash)) {
-    return redirect(request, "login_error");
+    return redirect("login_error");
   }
 
-  const res = redirect(request);
+  const res = redirect();
   res.cookies.set(ADMIN_SESSION_COOKIE, adminSessionValue(credential.updatedAt), adminCookieOptions());
   return res;
 }

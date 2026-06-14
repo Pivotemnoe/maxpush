@@ -8,6 +8,11 @@ const ADMIN_ID = "admin";
 const PASSWORD_MIN_LENGTH = 10;
 const USERNAME_PATTERN = /^[a-z0-9._-]{3,40}$/;
 
+export function adminRedirectUrl(path = "/admin") {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://notifymax.ru";
+  return new URL(path, baseUrl);
+}
+
 export function normalizeAdminUsername(username: unknown) {
   if (typeof username !== "string") return null;
   const clean = username.trim().toLowerCase();
