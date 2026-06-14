@@ -5,6 +5,10 @@ import android.os.Bundle
 import java.security.MessageDigest
 
 object NotificationMapper {
+    private const val IGNORED_FLAGS = Notification.FLAG_GROUP_SUMMARY or
+        Notification.FLAG_ONGOING_EVENT or
+        Notification.FLAG_FOREGROUND_SERVICE
+
     data class RelayEvent(
         val eventId: String,
         val sender: String?,
@@ -25,6 +29,11 @@ object NotificationMapper {
         )
     }
 
+    fun shouldIgnoreNotification(packageName: String, flags: Int): Boolean {
+        if (packageName != Constants.MAX_PACKAGE) return true
+        return flags and IGNORED_FLAGS != 0
+    }
+
     fun fromValues(
         packageName: String,
         key: String,
@@ -39,7 +48,7 @@ object NotificationMapper {
             title = title,
             conversationTitle = conversationTitle,
             subText = subText
-        )
+        ) ?: return null
 
         val eventId = sha256("$packageName|$key|$postTime|${sender.orEmpty()}")
         return RelayEvent(eventId = eventId, sender = sender, postedAt = postTime)

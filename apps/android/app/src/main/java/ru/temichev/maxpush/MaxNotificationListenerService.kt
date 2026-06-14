@@ -14,7 +14,7 @@ class MaxNotificationListenerService : NotificationListenerService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (sbn.packageName != Constants.MAX_PACKAGE) return
+        if (NotificationMapper.shouldIgnoreNotification(sbn.packageName, sbn.notification.flags)) return
         if (!TokenStore(applicationContext).isPaired()) return
 
         val event = NotificationMapper.fromNotification(

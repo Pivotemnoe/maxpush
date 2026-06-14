@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { sha256 } from "@/lib/crypto";
+import { duplicateWindowBounds } from "@/lib/notificationDedup";
 import { validateAndroidNotificationPayload } from "@/lib/notificationPayload";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { sendPushToUser } from "@/lib/webpush";
@@ -25,6 +26,27 @@ export async function POST(request: Request) {
   if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: validation.status });
 
   await prisma.device.update({ where: { id: device.id }, data: { lastSeenAt: new Date() } });
+
+  if (!validation.data.sender) {
+    return NextResponse.json({ ok: true, ignored: true, reason: "missing_sender", push_sent: 0, push_skipped: 0 });
+  }
+
+  const duplicateWindow = duplicateWindowBounds(validation.data.postedAt);
+  const recentDuplicate = await prisma.notificationEvent.findFirst({
+    where: {
+      userId: device.userId,
+      androidDeviceId: device.id,
+      sender: validation.data.sender,
+      packageName: validation.data.packageName,
+      privacyMode: validation.data.privacyMode,
+      postedAt: { gte: duplicateWindow.from, lte: duplicateWindow.to }
+    },
+    select: { id: true },
+    orderBy: { createdAt: "desc" }
+  });
+  if (recentDuplicate) {
+    return NextResponse.json({ ok: true, duplicate_window: true, push_sent: 0, push_skipped: 0 });
+  }
 
   try {
     const event = await prisma.notificationEvent.create({

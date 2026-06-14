@@ -48,6 +48,9 @@ export default function HomePage() {
           <strong>Прямая ссылка на APK:</strong>
           <a href="/download/max-push-latest.apk">https://notifymax.ru/download/max-push-latest.apk</a>
         </div>
+        <div className="notice privacy small">
+          <strong>Безопасность:</strong> на сервер отправляются только технический ID, отправитель или название чата и время. Текст сообщений, пароли, SMS, банки, контакты, фото, звонки и уведомления других приложений не отправляются.
+        </div>
         <div className="notice small">
           Сервис не восстанавливает push внутри официального приложения MAX. Он отправляет внешний дубликат уведомления на вашу PWA и требует Android-телефон с установленным MAX.
         </div>
