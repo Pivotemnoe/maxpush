@@ -6,6 +6,21 @@ import { prisma } from "./prisma";
 export const ADMIN_SESSION_COOKIE = "mp_admin";
 const ADMIN_ID = "admin";
 const PASSWORD_MIN_LENGTH = 10;
+const USERNAME_PATTERN = /^[a-z0-9._-]{3,40}$/;
+
+export function normalizeAdminUsername(username: unknown) {
+  if (typeof username !== "string") return null;
+  const clean = username.trim().toLowerCase();
+  return clean || null;
+}
+
+export function validateAdminUsername(username: unknown) {
+  const clean = normalizeAdminUsername(username);
+  if (!clean || !USERNAME_PATTERN.test(clean)) {
+    return "Логин должен быть от 3 до 40 символов: латиница, цифры, точка, дефис или подчёркивание.";
+  }
+  return null;
+}
 
 export function validateAdminPassword(password: unknown) {
   if (typeof password !== "string" || password.length < PASSWORD_MIN_LENGTH) {
@@ -43,12 +58,12 @@ export async function getAdminCredential() {
   return prisma.adminCredential.findUnique({ where: { id: ADMIN_ID } });
 }
 
-export async function upsertAdminPassword(password: string) {
+export async function upsertAdminCredential(username: string, password: string) {
   const passwordHash = hashAdminPassword(password);
   return prisma.adminCredential.upsert({
     where: { id: ADMIN_ID },
-    create: { id: ADMIN_ID, passwordHash },
-    update: { passwordHash }
+    create: { id: ADMIN_ID, username, passwordHash },
+    update: { username, passwordHash }
   });
 }
 

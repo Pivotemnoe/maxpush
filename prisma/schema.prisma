@@ -80,6 +80,7 @@ model NotificationEvent {
 
 model AdminCredential {
   id           String   @id @default("admin")
+  username     String   @unique @default("admin")
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

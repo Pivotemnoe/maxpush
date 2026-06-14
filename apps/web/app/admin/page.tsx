@@ -10,10 +10,10 @@ function firstParam(value: string | string[] | undefined) {
 }
 
 function messageText(code: string | undefined) {
-  if (code === "created") return "Пароль создан. Админка открыта.";
-  if (code === "login_error") return "Пароль не подошёл.";
-  if (code === "password_changed") return "Пароль изменён. Старые входы сброшены.";
-  if (code === "change_error") return "Не удалось сменить пароль. Проверьте текущий пароль и повтор нового пароля.";
+  if (code === "created") return "Логин и пароль созданы. Админка открыта.";
+  if (code === "login_error") return "Логин или пароль не подошли.";
+  if (code === "password_changed") return "Логин и пароль изменены. Старые входы сброшены.";
+  if (code === "change_error") return "Не удалось сменить логин и пароль. Проверьте текущий пароль, логин и повтор нового пароля.";
   if (code === "logout") return "Вы вышли из админки.";
   return null;
 }
@@ -48,17 +48,28 @@ function PasswordInput({ name, label, autoFocus = false }: { name: string; label
   );
 }
 
+function LoginInput({ name = "username", label = "Логин", defaultValue, autoFocus = false }: { name?: string; label?: string; defaultValue?: string; autoFocus?: boolean }) {
+  return (
+    <label className="field">
+      <span>{label}</span>
+      <input className="input" name={name} type="text" minLength={3} maxLength={40} pattern="[A-Za-z0-9._-]{3,40}" defaultValue={defaultValue} required autoFocus={autoFocus} autoCapitalize="none" autoComplete="username" />
+      <span className="small muted">Латиница, цифры, точка, дефис или подчёркивание.</span>
+    </label>
+  );
+}
+
 function SetupView({ message }: { message: string | null }) {
   return (
     <main className="container">
       <section className="card stack">
         <h1>Первичная настройка админки</h1>
-        <p className="muted">Задайте пароль. Он будет храниться в базе только как хэш, не открытым текстом.</p>
+        <p className="muted">Задайте логин и пароль. Пароль будет храниться в базе только как хэш, не открытым текстом.</p>
         {message && <div className="notice small">{message}</div>}
         <form className="form" method="post" action="/api/admin/setup">
-          <PasswordInput name="password" label="Новый пароль" autoFocus />
+          <LoginInput autoFocus />
+          <PasswordInput name="password" label="Новый пароль" />
           <PasswordInput name="confirm_password" label="Повторите пароль" />
-          <button className="button" type="submit">Создать пароль и войти</button>
+          <button className="button" type="submit">Создать логин, пароль и войти</button>
         </form>
       </section>
     </main>
@@ -70,10 +81,11 @@ function LoginView({ message }: { message: string | null }) {
     <main className="container">
       <section className="card stack">
         <h1>Вход в админку</h1>
-        <p className="muted">Введите пароль администратора, чтобы посмотреть статистику сервиса.</p>
+        <p className="muted">Введите логин и пароль администратора, чтобы посмотреть статистику сервиса.</p>
         {message && <div className="notice small">{message}</div>}
         <form className="form" method="post" action="/api/admin/login">
-          <PasswordInput name="password" label="Пароль" autoFocus />
+          <LoginInput autoFocus />
+          <PasswordInput name="password" label="Пароль" />
           <button className="button" type="submit">Войти</button>
         </form>
       </section>
@@ -81,7 +93,7 @@ function LoginView({ message }: { message: string | null }) {
   );
 }
 
-async function DashboardView({ message }: { message: string | null }) {
+async function DashboardView({ message, username }: { message: string | null; username: string }) {
   const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -132,7 +144,7 @@ async function DashboardView({ message }: { message: string | null }) {
         <div className="admin-header">
           <div>
             <h1>Админка Макс Пуш</h1>
-            <p className="muted">Сводка без текста сообщений и без секретных токенов.</p>
+            <p className="muted">Сводка без текста сообщений и без секретных токенов. Вход: {username}</p>
           </div>
           <form method="post" action="/api/admin/logout">
             <button className="button secondary" type="submit">Выйти</button>
@@ -172,12 +184,13 @@ async function DashboardView({ message }: { message: string | null }) {
       </section>
 
       <section className="card stack">
-        <h2>Сменить пароль</h2>
+        <h2>Сменить логин и пароль</h2>
         <form className="form" method="post" action="/api/admin/change-password">
           <PasswordInput name="current_password" label="Текущий пароль" />
+          <LoginInput name="new_username" label="Новый логин" defaultValue={username} />
           <PasswordInput name="new_password" label="Новый пароль" />
           <PasswordInput name="confirm_password" label="Повторите новый пароль" />
-          <button className="button" type="submit">Сменить пароль</button>
+          <button className="button" type="submit">Сменить логин и пароль</button>
         </form>
       </section>
     </main>
@@ -193,5 +206,5 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
   const admin = await getAdminSession();
   if (!admin) return <LoginView message={message} />;
 
-  return <DashboardView message={message} />;
+  return <DashboardView message={message} username={admin.username} />;
 }
