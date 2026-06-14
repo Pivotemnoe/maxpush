@@ -7,14 +7,23 @@ export default function HomePage() {
         <span className="badge">MVP v0.1</span>
         <h1>Макс Пуш</h1>
         <p className="muted">
-          Настройка начинается с Android: установите APK на телефон, где уже стоит MAX, затем откройте PWA на iPhone и свяжите устройства QR-кодом.
+          Макс Пуш отправляет внешний дубликат уведомления MAX с Android-телефона на iPhone PWA. Настройка начинается с Android: сначала подготовьте телефон с MAX, затем откройте PWA на iPhone и свяжите устройства QR-кодом.
         </p>
+        <div className="notice small">
+          <strong>Что понадобится:</strong>
+          <ul className="compact-list">
+            <li>Отдельный Android-телефон с Android 8 или новее. Он будет постоянно принимать уведомления MAX и пересылать их на iPhone.</li>
+            <li>На этом Android должен быть установлен официальный MAX, выполнен вход в ваш аккаунт MAX и включены уведомления MAX.</li>
+            <li>Android должен быть включён, подключён к интернету, а MAX и “Макс Пуш” не должны быть принудительно закрыты. Для стабильности лучше отключить экономию батареи для обоих приложений.</li>
+            <li>iPhone с PWA “Макс Пуш”, добавленной на экран “Домой”, и разрешёнными уведомлениями.</li>
+          </ul>
+        </div>
         <div className="setup-flow">
           <div className="setup-step">
             <span className="step-number">1</span>
             <div>
               <h2>Android: установить MaxPush</h2>
-              <p className="muted small">Откройте эту страницу на Android, скачайте APK и установите приложение “Макс Пуш”.</p>
+              <p className="muted small">Откройте эту страницу на Android-телефоне, где уже установлен MAX и выполнен вход в аккаунт. Скачайте APK и установите приложение “Макс Пуш”.</p>
               <div className="row">
                 <a className="button" href="/download/max-push-latest.apk">Скачать APK</a>
                 <Link className="button secondary" href="/android">Инструкция Android</Link>
@@ -52,7 +61,7 @@ export default function HomePage() {
           <strong>Безопасность:</strong> на сервер отправляются только технический ID, отправитель или название чата и время. Текст сообщений, пароли, SMS, банки, контакты, фото, звонки и уведомления других приложений не отправляются.
         </div>
         <div className="notice small">
-          Сервис не восстанавливает push внутри официального приложения MAX. Он отправляет внешний дубликат уведомления на вашу PWA и требует Android-телефон с установленным MAX.
+          Сервис не восстанавливает push внутри официального приложения MAX. Он работает как мост: Android получает уведомление MAX, “Макс Пуш” берёт только отправителя/чат и отправляет внешний дубликат на вашу PWA.
         </div>
       </section>
     </main>

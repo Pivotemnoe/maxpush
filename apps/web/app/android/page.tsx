@@ -22,8 +22,17 @@ export default function AndroidPage() {
       <section className="card stack">
         <h1>Шаг 1. Установите Макс Пуш на Android</h1>
         <p className="muted">
-          Это нужно сделать на Android-телефоне, где уже установлен MAX. APK читает только уведомления MAX и отправляет на iPhone отправителя/чат без текста сообщения.
+          Это нужно сделать на отдельном Android-телефоне с Android 8 или новее. На нём уже должен быть установлен официальный MAX, выполнен вход в ваш аккаунт MAX и включены уведомления MAX.
         </p>
+        <div className="notice small">
+          <strong>Как Android будет работать после настройки:</strong>
+          <ul className="compact-list">
+            <li>Телефон остаётся включённым и подключённым к интернету: Wi-Fi или мобильная сеть.</li>
+            <li>MAX должен получать уведомления на этом Android. Если MAX не залогинен или уведомления MAX выключены, пересылать будет нечего.</li>
+            <li>MAX и “Макс Пуш” можно свернуть, но не нужно принудительно закрывать. Для стабильной работы отключите экономию батареи для MAX и “Макс Пуш”.</li>
+            <li>APK читает только уведомления MAX и отправляет на iPhone отправителя/чат без текста сообщения.</li>
+          </ul>
+        </div>
         <div className="row">
           {localApkHref && <a className="button" href={localApkHref}>Скачать локальный APK</a>}
           <a className={localApkHref ? "button secondary" : "button"} href="/download/max-push-latest.apk">Скачать MaxPush APK</a>
@@ -36,7 +45,8 @@ export default function AndroidPage() {
         )}
         <h2>Порядок подключения</h2>
         <ol className="steps">
-          <li>Нажмите “Скачать MaxPush APK” на Android.</li>
+          <li>Возьмите Android-телефон, где уже установлен MAX и выполнен вход в нужный аккаунт.</li>
+          <li>Нажмите “Скачать MaxPush APK” на этом Android.</li>
           <li>Разрешите браузеру установку APK, если Android попросит.</li>
           <li>Откройте приложение “Макс Пуш”. Пока QR не сканируйте.</li>
           <li>На iPhone откройте <strong>notifymax.ru</strong>, нажмите “Открыть iPhone PWA”, добавьте PWA на экран “Домой” и включите уведомления.</li>

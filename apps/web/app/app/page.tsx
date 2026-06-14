@@ -229,14 +229,22 @@ export default function AppPage() {
     <main className="container stack">
       <section className="card stack">
         <h1>Подключение Макс Пуш</h1>
-        <p className="muted">Сначала установите Android APK. Затем на iPhone включите PWA-уведомления, покажите QR и отсканируйте его в Android-приложении.</p>
+        <p className="muted">Сначала подготовьте отдельный Android-телефон с MAX. Затем на iPhone включите PWA-уведомления, покажите QR и отсканируйте его в Android-приложении.</p>
         {!standalone && (
           <div className="notice small">
             <strong>Для iPhone:</strong> откройте сайт в Safari, нажмите “Поделиться”, выберите “На экран Домой”, затем откройте “Макс Пуш” с экрана Домой.
           </div>
         )}
+        <div className="notice small">
+          <strong>Перед подключением Android:</strong>
+          <ul className="compact-list">
+            <li>Нужен отдельный Android-телефон с Android 8 или новее.</li>
+            <li>На Android должен стоять официальный MAX, выполнен вход в ваш аккаунт MAX и включены уведомления MAX.</li>
+            <li>После настройки Android должен оставаться включённым и в сети. MAX и “Макс Пуш” можно свернуть, но не закрывать принудительно.</li>
+          </ul>
+        </div>
         <ol className="steps">
-          <li>На Android установите “Макс Пуш” и оставьте приложение открытым.</li>
+          <li>На Android, где уже работает MAX, установите “Макс Пуш” и оставьте приложение открытым.</li>
           <li>На iPhone нажмите “Включить уведомления”.</li>
           <li>На iPhone нажмите “Показать QR для Android”.</li>
           <li>На Android нажмите “Сканировать QR-код с iPhone”.</li>
@@ -273,12 +281,13 @@ export default function AppPage() {
       <section className="card stack">
         <h2>Порядок действий на Android</h2>
         <ol className="steps">
-          <li>Установите Android APK на телефон, где уже стоит MAX.</li>
+          <li>Проверьте, что на Android установлен MAX, выполнен вход в аккаунт и уведомления MAX приходят на этот телефон.</li>
+          <li>Установите Android APK “Макс Пуш” на этот же телефон.</li>
           <li>В Android-приложении нажмите “Сканировать QR-код с iPhone”.</li>
           <li>После сканирования нажмите “Включить доступ к уведомлениям”.</li>
           <li>Если Android блокирует доступ, откройте настройки приложения → меню ⋮ → “Разрешить ограниченные настройки”.</li>
         </ol>
-        <p className="small muted">Сервис не восстанавливает push внутри официального MAX. Он отправляет внешний дубликат на вашу PWA.</p>
+        <p className="small muted">Сервис не восстанавливает push внутри официального MAX. Он отправляет внешний дубликат на вашу PWA, пока Android-телефон включён, подключён к интернету и получает уведомления MAX.</p>
       </section>
 
       <section className="card stack">
